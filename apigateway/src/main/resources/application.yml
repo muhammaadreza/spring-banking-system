@@ -1,0 +1,54 @@
+server:
+    port: 70 # Port untuk API Gateway 
+spring:
+    application:
+        name: api-gateway # Nama aplikasi ini 
+    cloud:
+        gateway:
+            discovery:
+                locator:
+                    enabled: true # Mengaktifkan integrasi Eureka untuk menemukan layanan 
+            routes:
+                # Rute untuk Auth Service (User Service)
+                - id: auth-login # Rute khusus untuk Login
+                  uri: lb://user
+                  predicates:
+                    - Path=/login
+                - id: auth-register # Rute khusus untuk Register
+                  uri: lb://user
+                  predicates:
+                    - Path=/register
+
+                # Rute untuk User Service (lainnya)
+                - id: user-users # Rute untuk /users/**
+                  uri: lb://user
+                  predicates:
+                    - Path=/users/**
+                - id: user-accounts # Rute untuk /accounts/**
+                  uri: lb://user
+                  predicates:
+                    - Path=/accounts/**
+
+                # Rute untuk Transaction Service
+                - id: transaction-transactions # Rute untuk /transactions/**
+                  uri: lb://transaction
+                  predicates:
+                    - Path=/transactions/**
+                - id: transaction-loans # Rute untuk /loans/**
+                  uri: lb://transaction
+                  predicates:
+                    - Path=/loans/**
+
+                # Rute untuk Investment Service
+                - id: investment-investments # Rute untuk /investments/**
+                  uri: lb://investment
+                  predicates:
+                    - Path=/investments/**
+                - id: investment-depositos # Rute untuk /depositos/**
+                  uri: lb://investment
+                  predicates:
+                    - Path=/depositos/**
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8761/eureka # URL Eureka Server
